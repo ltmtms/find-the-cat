@@ -220,9 +220,22 @@ main {
   }
 }
 
+.challenge-prompt {
+  margin: 0 0 6px;
+  font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.challenge-prompt strong {
+  color: var(--accent);
+}
+
 .level-title {
   margin: 0 0 10px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--muted);
   text-align: center;
 }
