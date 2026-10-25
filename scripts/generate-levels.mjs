@@ -168,21 +168,22 @@ const LEVEL_VARIANTS = [
   { name: 'Master Rooftops', countdown: 18, roof: '#b04a36', cols: 36, rows: 34, uw: 26, uh: 21 },
 ];
 
-const sampleSrc = join(__dirname, '../public/levels/level-01.jpg');
-const sampleArtifact = join(__dirname, '../public/levels/level-01.jpg');
-if (!existsSync(sampleSrc)) {
-  const fromArtifact = '/opt/cursor/artifacts/assets/level-01-sample.jpg';
-  if (existsSync(fromArtifact)) {
-    copyFileSync(fromArtifact, sampleSrc);
-  }
-}
+const STEPHEN_SAMPLE = join(__dirname, 'assets/stephen-sample-find-the-cat.png');
+const level1Out = join(outDir, 'level-01.png');
 
-/** Level 1 — bundled sample illustration (upper-right peeping cat). */
+if (!existsSync(STEPHEN_SAMPLE)) {
+  throw new Error(
+    'Missing Stephen sample at scripts/assets/stephen-sample-find-the-cat.png — level 1 must use the exact attached image.'
+  );
+}
+copyFileSync(STEPHEN_SAMPLE, level1Out);
+
+/** Level 1 — Stephen's sample (600×776); cat upper-right, tuned to real pixels. */
 const LEVEL_1_HIT = {
-  x: 0.76,
-  y: 0.24,
-  w: 0.11,
-  h: 0.1,
+  x: 0.835,
+  y: 0.075,
+  w: 0.16,
+  h: 0.13,
 };
 
 const proceduralLevels = LEVEL_VARIANTS.filter((v) => !v.sample).map((def, idx) => {
@@ -197,8 +198,8 @@ const levels = [];
 
 levels.push({
   id: 1,
-  name: 'Sample Rooftops',
-  image: '/levels/level-01.jpg',
+  name: "Stephen's Sample",
+  image: '/levels/level-01.png',
   countdown: 10,
   hitBox: LEVEL_1_HIT,
 });
@@ -238,4 +239,4 @@ for (const def of proceduralLevels) {
 
 writeFileSync(join(__dirname, '../public/levels.json'), JSON.stringify({ levels }, null, 2), 'utf8');
 
-console.log(`Generated ${levels.length} levels (level 1 sample JPG + ${proceduralLevels.length} rooftop SVGs)`);
+console.log(`Generated ${levels.length} levels (level 1 Stephen PNG + ${proceduralLevels.length} rooftop SVGs)`);
