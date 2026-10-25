@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  
+      <rect width="1000" height="700" fill="#4da6ff"/>
+      <rect x="0" y="380" width="1000" height="320" fill="#f4d03f"/>
+      <ellipse cx="200" cy="420" rx="30" ry="8" fill="#e8c547"/>
+      <path d="M 0 380 Q 250 360 500 385 T 1000 375 L 1000 700 L 0 700 Z" fill="#5dade2"/>
+      <circle cx="900" cy="100" r="50" fill="#FFE066"/>
+      
+    <g class="hidden-cat" data-cat="1" transform="translate(474.5,615.38) scale(0.11)">
+      <ellipse cx="50" cy="58" rx="38" ry="32" fill="#e8d4a8" stroke="#c4a574" stroke-width="1.5"/>
+      <circle cx="50" cy="28" r="26" fill="#e8d4a8" stroke="#c4a574" stroke-width="1.5"/>
+      <polygon points="22,12 28,-8 38,14" fill="#e8d4a8" stroke="#c4a574" stroke-width="1"/>
+      <polygon points="78,12 72,-8 62,14" fill="#e8d4a8" stroke="#c4a574" stroke-width="1"/>
+      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
+      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
+      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="#c4a574" stroke-width="1"/>
+    </g>
+      <ellipse cx="150" cy="500" rx="25" ry="12" fill="#ff7f50" opacity="0.8"/>
+      <ellipse cx="700" cy="450" rx="40" ry="15" fill="#ff6b6b" opacity="0.7"/>
+    
+</svg>

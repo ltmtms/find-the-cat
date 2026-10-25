@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  
+      <rect width="1000" height="700" fill="#87CEEB"/>
+      <ellipse cx="500" cy="620" rx="520" ry="90" fill="#5a9e4a"/>
+      <rect x="80" y="200" width="40" height="280" fill="#6b4423"/>
+      <ellipse cx="100" cy="180" rx="90" ry="100" fill="#2d6a2d"/>
+      <rect x="750" y="220" width="35" height="250" fill="#5c3d1e"/>
+      <ellipse cx="768" cy="200" rx="75" ry="85" fill="#3d8b3d"/>
+      <circle cx="850" cy="80" r="55" fill="#FFE566"/>
+      
+    <g class="hidden-cat" data-cat="1" transform="translate(613,714.12) scale(0.14)">
+      <ellipse cx="50" cy="58" rx="38" ry="32" fill="#f4a460" stroke="#c97b3a" stroke-width="1.5"/>
+      <circle cx="50" cy="28" r="26" fill="#f4a460" stroke="#c97b3a" stroke-width="1.5"/>
+      <polygon points="22,12 28,-8 38,14" fill="#f4a460" stroke="#c97b3a" stroke-width="1"/>
+      <polygon points="78,12 72,-8 62,14" fill="#f4a460" stroke="#c97b3a" stroke-width="1"/>
+      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
+      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
+      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="#c97b3a" stroke-width="1"/>
+    </g>
+      <rect x="300" y="480" width="120" height="15" fill="#8B7355" rx="4"/>
+      <text x="320" y="520" font-family="sans-serif" font-size="14" fill="#555">bench</text>
+    
+</svg>

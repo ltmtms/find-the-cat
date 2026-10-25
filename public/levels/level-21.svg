@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  
+      <rect width="1000" height="700" fill="#1a1a1a"/>
+      <rect x="350" y="0" width="300" height="700" fill="#2d2d2d"/>
+      <rect x="380" y="120" width="80" height="100" fill="#3d3d3d"/>
+         <ellipse cx="420" cy="170" rx="25" ry="35" fill="#4a3728" opacity="0.6"/><rect x="380" y="250" width="80" height="100" fill="#3d3d3d"/>
+         <ellipse cx="420" cy="300" rx="25" ry="35" fill="#4a3728" opacity="0.6"/><rect x="380" y="380" width="80" height="100" fill="#3d3d3d"/>
+         <ellipse cx="420" cy="430" rx="25" ry="35" fill="#4a3728" opacity="0.6"/><rect x="380" y="510" width="80" height="100" fill="#3d3d3d"/>
+         <ellipse cx="420" cy="560" rx="25" ry="35" fill="#4a3728" opacity="0.6"/><rect x="380" y="640" width="80" height="100" fill="#3d3d3d"/>
+         <ellipse cx="420" cy="690" rx="25" ry="35" fill="#4a3728" opacity="0.6"/>
+      <ellipse cx="500" cy="650" rx="200" ry="30" fill="#0d0d0d"/>
+      
+    <g class="hidden-cat" data-cat="1" transform="translate(408.3,718.572) scale(0.034)">
+      <ellipse cx="50" cy="58" rx="38" ry="32" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="1.5"/>
+      <circle cx="50" cy="28" r="26" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="1.5"/>
+      <polygon points="22,12 28,-8 38,14" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="1"/>
+      <polygon points="78,12 72,-8 62,14" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
+      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
+      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+    </g>
+      <circle cx="500" cy="100" r="15" fill="#8b0000" opacity="0.4"/>
+    
+</svg>
