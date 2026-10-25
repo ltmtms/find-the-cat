@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  
+      <rect width="1000" height="700" fill="#e8e0d5"/>
+      <path d="M 0 200 Q 30 190 60 200" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 97 223 Q 127 213 157 223" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 194 246 Q 224 236 254 246" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 291 269 Q 321 259 351 269" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 388 292 Q 418 282 448 292" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 485 315 Q 515 305 545 315" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 582 338 Q 612 328 642 338" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 679 361 Q 709 351 739 361" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 776 384 Q 806 374 836 384" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 873 407 Q 903 397 933 407" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 970 430 Q 1000 420 1030 430" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 67 453 Q 97 443 127 453" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 164 476 Q 194 466 224 476" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 261 499 Q 291 489 321 499" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 358 522 Q 388 512 418 522" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 455 545 Q 485 535 515 545" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 552 568 Q 582 558 612 568" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 649 591 Q 679 581 709 591" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 746 214 Q 776 204 806 214" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 843 237 Q 873 227 903 237" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 940 260 Q 970 250 1000 260" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 37 283 Q 67 273 97 283" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 134 306 Q 164 296 194 306" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 231 329 Q 261 319 291 329" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 328 352 Q 358 342 388 352" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 425 375 Q 455 365 485 375" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 522 398 Q 552 388 582 398" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 619 421 Q 649 411 679 421" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 716 444 Q 746 434 776 444" fill="none" stroke="#c4b8a8" stroke-width="2"/><path d="M 813 467 Q 843 457 873 467" fill="none" stroke="#c4b8a8" stroke-width="2"/>
+      <ellipse cx="300" cy="450" rx="90" ry="50" fill="#7f8c8d"/>
+      <ellipse cx="650" cy="380" rx="70" ry="45" fill="#636e72"/>
+      <ellipse cx="500" cy="520" rx="110" ry="60" fill="#95a5a6"/>
+      
+    <g class="hidden-cat" data-cat="1" transform="translate(618.2,578.488) scale(0.036)">
+      <ellipse cx="50" cy="58" rx="38" ry="32" fill="#b2bec3" stroke="#95a5a6" stroke-width="1.5"/>
+      <circle cx="50" cy="28" r="26" fill="#b2bec3" stroke="#95a5a6" stroke-width="1.5"/>
+      <polygon points="22,12 28,-8 38,14" fill="#b2bec3" stroke="#95a5a6" stroke-width="1"/>
+      <polygon points="78,12 72,-8 62,14" fill="#b2bec3" stroke="#95a5a6" stroke-width="1"/>
+      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
+      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
+      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="#95a5a6" stroke-width="1"/>
+    </g>
+    
+</svg>

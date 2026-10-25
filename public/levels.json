@@ -1,0 +1,268 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "name": "Sunny Park",
+      "image": "/levels/level-01.svg",
+      "countdown": 45,
+      "hitBox": {
+        "x": 0.55,
+        "y": 0.6605,
+        "w": 0.14,
+        "h": 0.11900000000000001
+      }
+    },
+    {
+      "id": 2,
+      "name": "Cozy Kitchen",
+      "image": "/levels/level-02.svg",
+      "countdown": 42,
+      "hitBox": {
+        "x": 0.72,
+        "y": 0.5289999999999999,
+        "w": 0.12,
+        "h": 0.102
+      }
+    },
+    {
+      "id": 3,
+      "name": "Bookshelf Nook",
+      "image": "/levels/level-03.svg",
+      "countdown": 40,
+      "hitBox": {
+        "x": 0.3,
+        "y": 0.5075000000000001,
+        "w": 0.1,
+        "h": 0.085
+      }
+    },
+    {
+      "id": 4,
+      "name": "Beach Day",
+      "image": "/levels/level-04.svg",
+      "countdown": 40,
+      "hitBox": {
+        "x": 0.425,
+        "y": 0.57325,
+        "w": 0.11,
+        "h": 0.0935
+      }
+    },
+    {
+      "id": 5,
+      "name": "City Rooftop",
+      "image": "/levels/level-05.svg",
+      "countdown": 38,
+      "hitBox": {
+        "x": 0.505,
+        "y": 0.64175,
+        "w": 0.09,
+        "h": 0.0765
+      }
+    },
+    {
+      "id": 6,
+      "name": "Flower Garden",
+      "image": "/levels/level-06.svg",
+      "countdown": 38,
+      "hitBox": {
+        "x": 0.6775,
+        "y": 0.713875,
+        "w": 0.085,
+        "h": 0.07225000000000001
+      }
+    },
+    {
+      "id": 7,
+      "name": "Office Desk",
+      "image": "/levels/level-07.svg",
+      "countdown": 36,
+      "hitBox": {
+        "x": 0.38,
+        "y": 0.7859999999999999,
+        "w": 0.08,
+        "h": 0.068
+      }
+    },
+    {
+      "id": 8,
+      "name": "Snowy Yard",
+      "image": "/levels/level-08.svg",
+      "countdown": 36,
+      "hitBox": {
+        "x": 0.5425,
+        "y": 0.448125,
+        "w": 0.075,
+        "h": 0.06375
+      }
+    },
+    {
+      "id": 9,
+      "name": "Supermarket Aisle",
+      "image": "/levels/level-09.svg",
+      "countdown": 34,
+      "hitBox": {
+        "x": 0.24500000000000002,
+        "y": 0.39025,
+        "w": 0.07,
+        "h": 0.059500000000000004
+      }
+    },
+    {
+      "id": 10,
+      "name": "Attic Clutter",
+      "image": "/levels/level-10.svg",
+      "countdown": 34,
+      "hitBox": {
+        "x": 0.6175,
+        "y": 0.492375,
+        "w": 0.065,
+        "h": 0.05525
+      }
+    },
+    {
+      "id": 11,
+      "name": "Aquarium Lobby",
+      "image": "/levels/level-11.svg",
+      "countdown": 32,
+      "hitBox": {
+        "x": 0.35,
+        "y": 0.32449999999999996,
+        "w": 0.06,
+        "h": 0.051
+      }
+    },
+    {
+      "id": 12,
+      "name": "Farm Barn",
+      "image": "/levels/level-12.svg",
+      "countdown": 32,
+      "hitBox": {
+        "x": 0.491,
+        "y": 0.7553500000000001,
+        "w": 0.058,
+        "h": 0.049300000000000004
+      }
+    },
+    {
+      "id": 13,
+      "name": "Night Market",
+      "image": "/levels/level-13.svg",
+      "countdown": 30,
+      "hitBox": {
+        "x": 0.7925,
+        "y": 0.42662500000000003,
+        "w": 0.055,
+        "h": 0.04675
+      }
+    },
+    {
+      "id": 14,
+      "name": "Hospital Waiting",
+      "image": "/levels/level-14.svg",
+      "countdown": 30,
+      "hitBox": {
+        "x": 0.194,
+        "y": 0.6579,
+        "w": 0.052,
+        "h": 0.044199999999999996
+      }
+    },
+    {
+      "id": 15,
+      "name": "Jungle Trail",
+      "image": "/levels/level-15.svg",
+      "countdown": 28,
+      "hitBox": {
+        "x": 0.426,
+        "y": 0.35960000000000003,
+        "w": 0.048,
+        "h": 0.0408
+      }
+    },
+    {
+      "id": 16,
+      "name": "Art Studio",
+      "image": "/levels/level-16.svg",
+      "countdown": 28,
+      "hitBox": {
+        "x": 0.6575000000000001,
+        "y": 0.5308750000000001,
+        "w": 0.045,
+        "h": 0.03825
+      }
+    },
+    {
+      "id": 17,
+      "name": "Train Station",
+      "image": "/levels/level-17.svg",
+      "countdown": 26,
+      "hitBox": {
+        "x": 0.859,
+        "y": 0.30215000000000003,
+        "w": 0.042,
+        "h": 0.0357
+      }
+    },
+    {
+      "id": 18,
+      "name": "Candy Shop",
+      "image": "/levels/level-18.svg",
+      "countdown": 26,
+      "hitBox": {
+        "x": 0.13,
+        "y": 0.533,
+        "w": 0.04,
+        "h": 0.034
+      }
+    },
+    {
+      "id": 19,
+      "name": "Space Station",
+      "image": "/levels/level-19.svg",
+      "countdown": 24,
+      "hitBox": {
+        "x": 0.481,
+        "y": 0.48385,
+        "w": 0.038,
+        "h": 0.032299999999999995
+      }
+    },
+    {
+      "id": 20,
+      "name": "Zen Rock Garden",
+      "image": "/levels/level-20.svg",
+      "countdown": 24,
+      "hitBox": {
+        "x": 0.602,
+        "y": 0.5647,
+        "w": 0.036,
+        "h": 0.030599999999999995
+      }
+    },
+    {
+      "id": 21,
+      "name": "Haunted Hallway",
+      "image": "/levels/level-21.svg",
+      "countdown": 22,
+      "hitBox": {
+        "x": 0.39299999999999996,
+        "y": 0.70555,
+        "w": 0.034,
+        "h": 0.028900000000000002
+      }
+    },
+    {
+      "id": 22,
+      "name": "Master Challenge",
+      "image": "/levels/level-22.svg",
+      "countdown": 20,
+      "hitBox": {
+        "x": 0.715,
+        "y": 0.26725000000000004,
+        "w": 0.03,
+        "h": 0.0255
+      }
+    }
+  ]
+}

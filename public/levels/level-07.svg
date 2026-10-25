@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
+  
+      <rect width="1000" height="700" fill="#eceff1"/>
+      <rect x="0" y="450" width="1000" height="250" fill="#795548"/>
+      <rect x="150" y="200" width="400" height="280" fill="#263238" rx="8"/>
+      <rect x="170" y="220" width="360" height="200" fill="#37474f"/>
+      <rect x="600" y="380" width="120" height="80" fill="#fff" stroke="#ccc"/>
+      <rect x="750" y="350" width="180" height="120" fill="#ffecb3"/>
+      
+    <g class="hidden-cat" data-cat="1" transform="translate(416,816.64) scale(0.08)">
+      <ellipse cx="50" cy="58" rx="38" ry="32" fill="#bdbdbd" stroke="#9e9e9e" stroke-width="1.5"/>
+      <circle cx="50" cy="28" r="26" fill="#bdbdbd" stroke="#9e9e9e" stroke-width="1.5"/>
+      <polygon points="22,12 28,-8 38,14" fill="#bdbdbd" stroke="#9e9e9e" stroke-width="1"/>
+      <polygon points="78,12 72,-8 62,14" fill="#bdbdbd" stroke="#9e9e9e" stroke-width="1"/>
+      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
+      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
+      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
+      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="#9e9e9e" stroke-width="1"/>
+    </g>
+      <circle cx="850" cy="150" r="60" fill="#fff9c4" opacity="0.6"/>
+      <rect x="50" y="480" width="80" height="100" fill="#5d4037"/>
+    
+</svg>
