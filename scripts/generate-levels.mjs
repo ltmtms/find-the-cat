@@ -6,10 +6,23 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, '../public/levels');
 mkdirSync(outDir, { recursive: true });
 
-/** Normalized hit box for the cat (0–1 relative to viewBox). */
-function catHit(cx, cy, size) {
-  const w = size;
-  const h = size * 0.85;
+const W = 1000;
+const H = 700;
+
+/** Seeded PRNG for reproducible layouts. */
+function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Normalized hit box centered on the cat; wider than the sprite for touch screens. */
+function catHit(cx, cy, visualSize) {
+  const w = Math.max(visualSize * 2.25, 0.072);
+  const h = Math.max(visualSize * 2.0, 0.064);
   return {
     x: cx - w / 2,
     y: cy - h / 2,
@@ -18,416 +31,301 @@ function catHit(cx, cy, size) {
   };
 }
 
-function catSvg(cx, cy, size, fill, stroke = 'none') {
-  const s = size * 100;
-  const x = cx * 1000 - s / 2;
-  const y = cy * 1000 - s * 0.42;
+/** Tiny camouflaged cat head (reference style). */
+function peekCatSvg(cx, cy, size, fill = '#8a8a8a', stroke = '#5c5c5c') {
+  const scale = size;
+  const localW = 100;
+  const localH = 72;
+  const localCenterX = 50;
+  const localCenterY = 38;
+  const x = cx * W - localCenterX * scale;
+  const y = cy * H - localCenterY * scale;
+  const sc = scale;
   return `
-    <g class="hidden-cat" data-cat="1" transform="translate(${x},${y}) scale(${s / 100})">
-      <ellipse cx="50" cy="58" rx="38" ry="32" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
-      <circle cx="50" cy="28" r="26" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
-      <polygon points="22,12 28,-8 38,14" fill="${fill}" stroke="${stroke}" stroke-width="1"/>
-      <polygon points="78,12 72,-8 62,14" fill="${fill}" stroke="${stroke}" stroke-width="1"/>
-      <circle cx="40" cy="26" r="4" fill="#1a1a2e"/>
-      <circle cx="60" cy="26" r="4" fill="#1a1a2e"/>
-      <path d="M 44 34 Q 50 38 56 34" fill="none" stroke="#1a1a2e" stroke-width="2"/>
-      <path d="M 35 50 Q 50 55 65 50" fill="none" stroke="${stroke === 'none' ? 'rgba(0,0,0,0.15)' : stroke}" stroke-width="1"/>
+    <g class="hidden-cat" data-cat="1" transform="translate(${x},${y}) scale(${sc})">
+      <path d="M 18 42 L 28 8 L 38 38 Z" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>
+      <path d="M 62 42 L 72 8 L 82 38 Z" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>
+      <ellipse cx="50" cy="44" rx="34" ry="28" fill="${fill}" stroke="${stroke}" stroke-width="1.2"/>
+      <circle cx="38" cy="40" r="3.5" fill="#1a1a1a"/>
+      <circle cx="62" cy="40" r="3.5" fill="#1a1a1a"/>
+      <path d="M 42 50 Q 50 54 58 50" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
     </g>`;
 }
 
-const LEVEL_DEFS = [
-  {
-    id: 1,
-    name: 'Sunny Park',
-    countdown: 45,
-    bg: '#87CEEB',
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#87CEEB"/>
-      <ellipse cx="500" cy="620" rx="520" ry="90" fill="#5a9e4a"/>
-      <rect x="80" y="200" width="40" height="280" fill="#6b4423"/>
-      <ellipse cx="100" cy="180" rx="90" ry="100" fill="#2d6a2d"/>
-      <rect x="750" y="220" width="35" height="250" fill="#5c3d1e"/>
-      <ellipse cx="768" cy="200" rx="75" ry="85" fill="#3d8b3d"/>
-      <circle cx="850" cy="80" r="55" fill="#FFE566"/>
-      ${catSvg(c.cx, c.cy, c.size, '#f4a460', '#c97b3a')}
-      <rect x="300" y="480" width="120" height="15" fill="#8B7355" rx="4"/>
-      <text x="320" y="520" font-family="sans-serif" font-size="14" fill="#555">bench</text>
-    `,
-    cat: { cx: 0.62, cy: 0.72, size: 0.14 },
-  },
-  {
-    id: 2,
-    name: 'Cozy Kitchen',
-    countdown: 42,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#f5e6d3"/>
-      <rect x="0" y="0" width="1000" height="120" fill="#8b6914"/>
-      <rect x="50" y="150" width="900" height="400" fill="#d4c4a8"/>
-      <rect x="100" y="200" width="200" height="180" fill="#c0c0c0" stroke="#888"/>
-      <circle cx="200" cy="290" r="40" fill="#e8e8e8"/>
-      <rect x="400" y="250" width="80" height="100" fill="#ff6b6b"/>
-      <rect x="500" y="250" width="60" height="80" fill="#4ecdc4"/>
-      <rect x="600" y="280" width="300" height="20" fill="#654321"/>
-      ${catSvg(c.cx, c.cy, c.size, '#c9a66b', '#8b7355')}
-      <rect x="0" y="550" width="1000" height="150" fill="#6b5344"/>
-    `,
-    cat: { cx: 0.78, cy: 0.58, size: 0.12 },
-  },
-  {
-    id: 3,
-    name: 'Bookshelf Nook',
-    countdown: 40,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#2c2416"/>
-      ${Array.from({ length: 8 }, (_, i) => {
-        const colors = ['#8B0000', '#006400', '#00008B', '#8B4513', '#2F4F4F', '#800080', '#D2691E', '#191970'];
-        return `<rect x="${40 + i * 115}" y="80" width="95" height="520" fill="${colors[i]}" opacity="0.9"/>
-          <rect x="${45 + i * 115}" y="100" width="20" height="480" fill="${colors[(i + 2) % 8]}"/>
-          <rect x="${70 + i * 115}" y="120" width="25" height="460" fill="${colors[(i + 4) % 8]}"/>
-          <rect x="${100 + i * 115}" y="90" width="18" height="500" fill="${colors[(i + 1) % 8]}"/>`;
-      }).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#4a3728', '#3d2e1f')}
-      <rect x="0" y="600" width="1000" height="100" fill="#1a1408"/>
-    `,
-    cat: { cx: 0.35, cy: 0.55, size: 0.1 },
-  },
-  {
-    id: 4,
-    name: 'Beach Day',
-    countdown: 40,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#4da6ff"/>
-      <rect x="0" y="380" width="1000" height="320" fill="#f4d03f"/>
-      <ellipse cx="200" cy="420" rx="30" ry="8" fill="#e8c547"/>
-      <path d="M 0 380 Q 250 360 500 385 T 1000 375 L 1000 700 L 0 700 Z" fill="#5dade2"/>
-      <circle cx="900" cy="100" r="50" fill="#FFE066"/>
-      ${catSvg(c.cx, c.cy, c.size, '#e8d4a8', '#c4a574')}
-      <ellipse cx="150" cy="500" rx="25" ry="12" fill="#ff7f50" opacity="0.8"/>
-      <ellipse cx="700" cy="450" rx="40" ry="15" fill="#ff6b6b" opacity="0.7"/>
-    `,
-    cat: { cx: 0.48, cy: 0.62, size: 0.11 },
-  },
-  {
-    id: 5,
-    name: 'City Rooftop',
-    countdown: 38,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#1a1a2e"/>
-      <rect x="0" y="400" width="200" height="300" fill="#16213e"/>
-      <rect x="220" y="320" width="180" height="380" fill="#0f3460"/>
-      <rect x="420" y="450" width="250" height="250" fill="#533483"/>
-      <rect x="700" y="280" width="150" height="420" fill="#e94560"/>
-      <rect x="880" y="380" width="120" height="320" fill="#1a1a2e"/>
-      ${Array.from({ length: 30 }, (_, i) =>
-        `<rect x="${(i * 37) % 980}" y="${200 + (i * 23) % 180}" width="8" height="12" fill="#FFE566" opacity="${0.3 + (i % 5) * 0.15}"/>`
-      ).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#2d2d44', '#1f1f33')}
-      <rect x="0" y="620" width="1000" height="80" fill="#333"/>
-    `,
-    cat: { cx: 0.55, cy: 0.68, size: 0.09 },
-  },
-  {
-    id: 6,
-    name: 'Flower Garden',
-    countdown: 38,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#a8e6cf"/>
-      <ellipse cx="500" cy="650" rx="500" ry="60" fill="#56ab2f"/>
-      ${Array.from({ length: 25 }, (_, i) => {
-        const x = 50 + (i * 41) % 900;
-        const y = 350 + (i * 17) % 280;
-        const col = ['#ff6b9d', '#c44569', '#f8b500', '#e55039', '#6a89cc'][i % 5];
-        return `<circle cx="${x}" cy="${y}" r="18" fill="${col}"/><rect x="${x - 2}" y="${y}" width="4" height="40" fill="#2d5016"/>`;
-      }).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#7cb342', '#558b2f')}
-      <rect x="100" y="100" width="800" height="30" fill="#8d6e63" opacity="0.5"/>
-    `,
-    cat: { cx: 0.72, cy: 0.75, size: 0.085 },
-  },
-  {
-    id: 7,
-    name: 'Office Desk',
-    countdown: 36,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#eceff1"/>
-      <rect x="0" y="450" width="1000" height="250" fill="#795548"/>
-      <rect x="150" y="200" width="400" height="280" fill="#263238" rx="8"/>
-      <rect x="170" y="220" width="360" height="200" fill="#37474f"/>
-      <rect x="600" y="380" width="120" height="80" fill="#fff" stroke="#ccc"/>
-      <rect x="750" y="350" width="180" height="120" fill="#ffecb3"/>
-      ${catSvg(c.cx, c.cy, c.size, '#bdbdbd', '#9e9e9e')}
-      <circle cx="850" cy="150" r="60" fill="#fff9c4" opacity="0.6"/>
-      <rect x="50" y="480" width="80" height="100" fill="#5d4037"/>
-    `,
-    cat: { cx: 0.42, cy: 0.82, size: 0.08 },
-  },
-  {
-    id: 8,
-    name: 'Snowy Yard',
-    countdown: 36,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#b3d9f2"/>
-      <rect x="0" y="350" width="1000" height="350" fill="#fff"/>
-      <ellipse cx="150" cy="200" rx="60" ry="80" fill="#fff" opacity="0.9"/>
-      <ellipse cx="850" cy="180" rx="50" ry="70" fill="#fff"/>
-      <rect x="400" y="250" width="200" height="150" fill="#8d6e63"/>
-      <polygon points="400,250 500,150 600,250" fill="#5d4037"/>
-      ${catSvg(c.cx, c.cy, c.size, '#e8e8e8', '#d0d0d0')}
-      ${Array.from({ length: 40 }, (_, i) =>
-        `<circle cx="${(i * 27) % 1000}" cy="${100 + (i * 19) % 250}" r="3" fill="#fff"/>`
-      ).join('')}
-    `,
-    cat: { cx: 0.58, cy: 0.48, size: 0.075 },
-  },
-  {
-    id: 9,
-    name: 'Supermarket Aisle',
-    countdown: 34,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#f5f5f5"/>
-      ${Array.from({ length: 6 }, (_, row) =>
-        Array.from({ length: 10 }, (_, col) => {
-          const hues = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
-          return `<rect x="${80 + col * 88}" y="${80 + row * 95}" width="70" height="75" fill="${hues[(row + col) % 6]}" rx="4"/>`;
-        }).join('')
-      ).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#f39c12', '#d68910')}
-      <rect x="0" y="650" width="1000" height="50" fill="#bdc3c7"/>
-    `,
-    cat: { cx: 0.28, cy: 0.42, size: 0.07 },
-  },
-  {
-    id: 10,
-    name: 'Attic Clutter',
-    countdown: 34,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#3e2723"/>
-      <polygon points="0,0 500,80 1000,0 1000,700 0,700" fill="#4e342e"/>
-      <rect x="100" y="400" width="150" height="120" fill="#6d4c41"/>
-      <rect x="300" y="450" width="200" height="80" fill="#5d4037"/>
-      <ellipse cx="700" cy="500" rx="80" ry="50" fill="#8d6e63"/>
-      <rect x="750" y="300" width="100" height="180" fill="#795548"/>
-      ${catSvg(c.cx, c.cy, c.size, '#5d4037', '#4e342e')}
-      <line x1="0" y1="80" x2="1000" y2="0" stroke="#3e2723" stroke-width="4"/>
-    `,
-    cat: { cx: 0.65, cy: 0.52, size: 0.065 },
-  },
-  {
-    id: 11,
-    name: 'Aquarium Lobby',
-    countdown: 32,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#0d1b2a"/>
-      <rect x="100" y="80" width="800" height="450" fill="#1b263b" stroke="#415a77" stroke-width="8"/>
-      ${Array.from({ length: 15 }, (_, i) => {
-        const x = 150 + (i * 53) % 700;
-        const y = 150 + (i * 31) % 350;
-        return `<ellipse cx="${x}" cy="${y}" rx="${12 + i % 8}" ry="${6 + i % 5}" fill="${['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3'][i % 4]}" opacity="0.85"/>`;
-      }).join('')}
-      <path d="M 120 500 Q 300 480 500 510 T 880 490" fill="none" stroke="#778da9" stroke-width="3"/>
-      ${catSvg(c.cx, c.cy, c.size, '#1b263b', '#0d1b2a')}
-      <rect x="0" y="550" width="1000" height="150" fill="#415a77"/>
-    `,
-    cat: { cx: 0.38, cy: 0.35, size: 0.06 },
-  },
-  {
-    id: 12,
-    name: 'Farm Barn',
-    countdown: 32,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#87CEEB"/>
-      <rect x="0" y="500" width="1000" height="200" fill="#8B4513"/>
-      <rect x="250" y="200" width="500" height="350" fill="#A0522D"/>
-      <polygon points="250,200 500,80 750,200" fill="#8B0000"/>
-      <rect x="420" y="350" width="160" height="200" fill="#3e2723"/>
-      <rect x="50" y="520" width="120" height="100" fill="#DEB887"/>
-      ${catSvg(c.cx, c.cy, c.size, '#A0522D', '#8B4513')}
-      <ellipse cx="900" cy="550" rx="40" ry="25" fill="#fff"/>
-    `,
-    cat: { cx: 0.52, cy: 0.78, size: 0.058 },
-  },
-  {
-    id: 13,
-    name: 'Night Market',
-    countdown: 30,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#1a0a2e"/>
-      ${Array.from({ length: 8 }, (_, i) =>
-        `<rect x="${50 + i * 120}" y="200" width="100" height="350" fill="#2d1b4e"/>
-         <ellipse cx="${100 + i * 120}" cy="180" rx="55" ry="25" fill="${['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff'][i % 4]}"/>`
-      ).join('')}
-      ${Array.from({ length: 50 }, (_, i) =>
-        `<circle cx="${(i * 23) % 1000}" cy="${50 + (i * 17) % 150}" r="2" fill="#fff" opacity="0.8"/>`
-      ).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#2d1b4e', '#1a0a2e')}
-      <rect x="0" y="580" width="1000" height="120" fill="#0f0618"/>
-    `,
-    cat: { cx: 0.82, cy: 0.45, size: 0.055 },
-  },
-  {
-    id: 14,
-    name: 'Hospital Waiting',
-    countdown: 30,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#e8f4f8"/>
-      <rect x="0" y="0" width="1000" height="80" fill="#0288d1"/>
-      ${Array.from({ length: 5 }, (_, i) =>
-        `<rect x="${80 + i * 180}" y="150" width="140" height="50" fill="#b3e5fc" stroke="#0288d1"/>
-         <rect x="${100 + i * 180}" y="400" width="100" height="120" fill="#4fc3f7" rx="8"/>`
-      ).join('')}
-      <rect x="0" y="600" width="1000" height="100" fill="#cfd8dc"/>
-      ${catSvg(c.cx, c.cy, c.size, '#b3e5fc', '#81d4fa')}
-      <circle cx="500" cy="40" r="20" fill="#fff"/>
-    `,
-    cat: { cx: 0.22, cy: 0.68, size: 0.052 },
-  },
-  {
-    id: 15,
-    name: 'Jungle Trail',
-    countdown: 28,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#1b4332"/>
-      ${Array.from({ length: 20 }, (_, i) => {
-        const x = (i * 53) % 1000;
-        return `<ellipse cx="${x}" cy="${100 + (i * 40) % 500}" rx="60" ry="40" fill="${['#2d6a4f', '#40916c', '#52b788', '#1b4332'][i % 4]}"/>`;
-      }).join('')}
-      <path d="M 0 600 Q 200 550 400 620 T 800 580 L 1000 650 L 1000 700 L 0 700 Z" fill="#5c4033"/>
-      ${catSvg(c.cx, c.cy, c.size, '#2d6a4f', '#1b4332')}
-      <circle cx="200" cy="80" r="8" fill="#ffd93d" opacity="0.5"/>
-    `,
-    cat: { cx: 0.45, cy: 0.38, size: 0.048 },
-  },
-  {
-    id: 16,
-    name: 'Art Studio',
-    countdown: 28,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#faf3e0"/>
-      <rect x="80" y="100" width="350" height="450" fill="#fff" stroke="#333" stroke-width="4"/>
-      <rect x="120" y="140" width="270" height="200" fill="#e74c3c" opacity="0.7"/>
-      <rect x="120" y="350" width="130" height="150" fill="#3498db" opacity="0.7"/>
-      <rect x="260" y="350" width="130" height="150" fill="#f1c40f" opacity="0.7"/>
-      <ellipse cx="750" cy="400" rx="100" ry="80" fill="#bdc3c7"/>
-      ${catSvg(c.cx, c.cy, c.size, '#e8d5b7', '#d4c4a0')}
-      ${Array.from({ length: 12 }, (_, i) =>
-        `<circle cx="${600 + (i % 4) * 35}" cy="${150 + Math.floor(i / 4) * 40}" r="15" fill="${['#e74c3c', '#3498db', '#2ecc71', '#9b59b6'][i % 4]}"/>`
-      ).join('')}
-    `,
-    cat: { cx: 0.68, cy: 0.55, size: 0.045 },
-  },
-  {
-    id: 17,
-    name: 'Train Station',
-    countdown: 26,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#dfe6e9"/>
-      <rect x="0" y="0" width="1000" height="150" fill="#636e72"/>
-      ${Array.from({ length: 6 }, (_, i) =>
-        `<rect x="${50 + i * 30}" y="0" width="20" height="150" fill="#b2bec3"/>`
-      ).join('')}
-      <rect x="100" y="400" width="800" height="120" fill="#2d3436"/>
-      <rect x="150" y="250" width="700" height="180" fill="#0984e3" rx="10"/>
-      <rect x="200" y="280" width="80" height="60" fill="#74b9ff"/>
-      <rect x="320" y="280" width="80" height="60" fill="#74b9ff"/>
-      ${catSvg(c.cx, c.cy, c.size, '#636e72', '#2d3436')}
-      <text x="450" y="200" font-size="48" fill="#2d3436" font-family="sans-serif">PLATFORM 3</text>
-    `,
-    cat: { cx: 0.88, cy: 0.32, size: 0.042 },
-  },
-  {
-    id: 18,
-    name: 'Candy Shop',
-    countdown: 26,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#ffeaa7"/>
-      ${Array.from({ length: 8 }, (_, row) =>
-        Array.from({ length: 12 }, (_, col) => {
-          const colors = ['#ff7675', '#fd79a8', '#fdcb6e', '#e17055', '#a29bfe', '#55efc4'];
-          return `<circle cx="${60 + col * 78}" cy="${100 + row * 70}" r="22" fill="${colors[(row + col) % 6]}" stroke="#fff" stroke-width="3"/>`;
-        }).join('')
-      ).join('')}
-      <rect x="0" y="580" width="1000" height="120" fill="#fab1a0"/>
-      ${catSvg(c.cx, c.cy, c.size, '#fdcb6e', '#f39c12')}
-    `,
-    cat: { cx: 0.15, cy: 0.55, size: 0.04 },
-  },
-  {
-    id: 19,
-    name: 'Space Station',
-    countdown: 24,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#0c0c1d"/>
-      ${Array.from({ length: 80 }, (_, i) =>
-        `<circle cx="${(i * 127) % 1000}" cy="${(i * 89) % 700}" r="${1 + i % 3}" fill="#fff" opacity="${0.3 + (i % 7) * 0.1}"/>`
-      ).join('')}
-      <ellipse cx="500" cy="350" rx="400" ry="200" fill="none" stroke="#4a4a6a" stroke-width="2"/>
-      <rect x="200" y="300" width="600" height="100" fill="#2d2d5a"/>
-      <rect x="250" y="320" width="80" height="60" fill="#00cec9" opacity="0.5"/>
-      <rect x="400" y="320" width="200" height="60" fill="#6c5ce7" opacity="0.4"/>
-      ${catSvg(c.cx, c.cy, c.size, '#2d2d5a', '#1a1a3a')}
-      <circle cx="800" cy="150" r="40" fill="#dfe6e9" opacity="0.3"/>
-    `,
-    cat: { cx: 0.5, cy: 0.5, size: 0.038 },
-  },
-  {
-    id: 20,
-    name: 'Zen Rock Garden',
-    countdown: 24,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#e8e0d5"/>
-      ${Array.from({ length: 30 }, (_, i) => {
-        const x1 = (i * 97) % 1000;
-        const y1 = 200 + (i * 23) % 400;
-        return `<path d="M ${x1} ${y1} Q ${x1 + 30} ${y1 - 10} ${x1 + 60} ${y1}" fill="none" stroke="#c4b8a8" stroke-width="2"/>`;
-      }).join('')}
-      <ellipse cx="300" cy="450" rx="90" ry="50" fill="#7f8c8d"/>
-      <ellipse cx="650" cy="380" rx="70" ry="45" fill="#636e72"/>
-      <ellipse cx="500" cy="520" rx="110" ry="60" fill="#95a5a6"/>
-      ${catSvg(c.cx, c.cy, c.size, '#b2bec3', '#95a5a6')}
-    `,
-    cat: { cx: 0.62, cy: 0.58, size: 0.036 },
-  },
-  {
-    id: 21,
-    name: 'Haunted Hallway',
-    countdown: 22,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#1a1a1a"/>
-      <rect x="350" y="0" width="300" height="700" fill="#2d2d2d"/>
-      ${Array.from({ length: 5 }, (_, i) =>
-        `<rect x="${380}" y="${120 + i * 130}" width="80" height="100" fill="#3d3d3d"/>
-         <ellipse cx="${420}" cy="${170 + i * 130}" rx="25" ry="35" fill="#4a3728" opacity="0.6"/>`
-      ).join('')}
-      <ellipse cx="500" cy="650" rx="200" ry="30" fill="#0d0d0d"/>
-      ${catSvg(c.cx, c.cy, c.size, '#2d2d2d', '#1a1a1a')}
-      <circle cx="500" cy="100" r="15" fill="#8b0000" opacity="0.4"/>
-    `,
-    cat: { cx: 0.41, cy: 0.72, size: 0.034 },
-  },
-  {
-    id: 22,
-    name: 'Master Challenge',
-    countdown: 20,
-    draw: (c) => `
-      <rect width="1000" height="700" fill="#2c3e50"/>
-      ${Array.from({ length: 100 }, (_, i) => {
-        const x = (i * 37) % 1000;
-        const y = (i * 23) % 700;
-        const col = `hsl(${(i * 17) % 360}, 25%, ${25 + (i % 20)}%)`;
-        return `<rect x="${x}" y="${y}" width="${8 + i % 12}" height="${8 + i % 10}" fill="${col}" opacity="0.7"/>`;
-      }).join('')}
-      ${catSvg(c.cx, c.cy, c.size, '#34495e', '#2c3e50')}
-      <text x="400" y="50" font-size="28" fill="#ecf0f1" font-family="sans-serif" opacity="0.5">Where kitty?</text>
-    `,
-    cat: { cx: 0.73, cy: 0.28, size: 0.03 },
-  },
+function roofTileLines(x, y, rw, rh, color = '#c45c3e') {
+  let lines = '';
+  for (let i = 0; i < rh; i += 5) {
+    lines += `<line x1="${x}" y1="${y + i}" x2="${x + rw}" y2="${y + i}" stroke="${color}" stroke-width="0.6" opacity="0.35"/>`;
+  }
+  return lines;
+}
+
+/** Dense terracotta rooftop city (reference aesthetic). */
+function drawRooftopCity(rand, opts = {}) {
+  const roof = opts.roof ?? '#c45c3e';
+  const wall = opts.wall ?? '#f2f0ec';
+  const wallStroke = opts.wallStroke ?? '#2a2a2a';
+  const bg = opts.bg ?? '#e8e4df';
+  const cols = opts.cols ?? 14;
+  const rows = opts.rows ?? 10;
+  const cellW = W / cols;
+  const cellH = H / rows;
+  let svg = `<rect width="${W}" height="${H}" fill="${bg}"/>`;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const jitterX = (rand() - 0.5) * cellW * 0.15;
+      const jitterY = (rand() - 0.5) * cellH * 0.12;
+      const x = col * cellW + jitterX + 1;
+      const y = row * cellH + jitterY + 1;
+      const bw = cellW - 2 + rand() * 4;
+      const bh = cellH * 0.42 + rand() * 8;
+      const rh = cellH * 0.48 + rand() * 10;
+      const roofY = y;
+      const wallY = y + rh * 0.55;
+      const wallH = bh + rh * 0.45;
+      svg += `<polygon points="${x},${roofY + rh} ${x + bw / 2},${roofY} ${x + bw},${roofY + rh}" fill="${roof}" stroke="${wallStroke}" stroke-width="0.8"/>`;
+      svg += roofTileLines(x, roofY, bw, rh, roof);
+      svg += `<rect x="${x + 2}" y="${wallY}" width="${bw - 4}" height="${wallH}" fill="${wall}" stroke="${wallStroke}" stroke-width="0.7"/>`;
+      if (rand() > 0.35) {
+        const wx = x + bw * (0.2 + rand() * 0.5);
+        const wy = wallY + wallH * (0.25 + rand() * 0.35);
+        const ww = bw * (0.12 + rand() * 0.1);
+        const wh = wallH * (0.2 + rand() * 0.15);
+        svg += `<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#d8d4ce" stroke="${wallStroke}" stroke-width="0.5"/>`;
+      }
+      if (rand() > 0.7) {
+        const cx = x + bw / 2;
+        const cy = roofY + rh * 0.35;
+        svg += `<circle cx="${cx}" cy="${cy}" r="3" fill="${wall}" stroke="${wallStroke}" stroke-width="0.5"/>`;
+      }
+    }
+  }
+  return svg;
+}
+
+function drawMarketGrid(rand) {
+  let svg = `<rect width="${W}" height="${H}" fill="#f5e6d0"/>`;
+  const cols = 12;
+  const rows = 9;
+  const cw = W / cols;
+  const ch = H / rows;
+  const awningColors = ['#e74c3c', '#3498db', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22'];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * cw + 2;
+      const y = row * ch + 2;
+      const aw = cw - 4;
+      const ah = ch * 0.35;
+      const colA = awningColors[Math.floor(rand() * awningColors.length)];
+      svg += `<path d="M ${x} ${y + ah} L ${x + aw / 2} ${y} L ${x + aw} ${y + ah} Z" fill="${colA}" stroke="#333" stroke-width="0.6"/>`;
+      for (let s = 0; s < 5; s++) {
+        const sx = x + 4 + s * (aw / 5);
+        svg += `<line x1="${sx}" y1="${y + ah}" x2="${sx}" y2="${y + ah + ch * 0.55}" stroke="#555" stroke-width="0.5"/>`;
+      }
+      svg += `<rect x="${x + 3}" y="${y + ah}" width="${aw - 6}" height="${ch * 0.58}" fill="#fff8ef" stroke="#444" stroke-width="0.6"/>`;
+      for (let p = 0; p < 8; p++) {
+        const px = x + 6 + (p % 4) * (aw / 4.5);
+        const py = y + ah + 8 + Math.floor(p / 4) * (ch * 0.22);
+        const ps = 4 + rand() * 6;
+        svg += `<rect x="${px}" y="${py}" width="${ps}" height="${ps}" fill="hsl(${rand() * 360}, 55%, 55%)" stroke="#333" stroke-width="0.4"/>`;
+      }
+    }
+  }
+  return svg;
+}
+
+function drawBeachUmbrellas(rand) {
+  let svg = `<rect width="${W}" height="${H}" fill="#5dade2"/>`;
+  svg += `<rect x="0" y="${H * 0.45}" width="${W}" height="${H * 0.55}" fill="#f4d03f"/>`;
+  const cols = 11;
+  const rows = 8;
+  const cw = W / cols;
+  const ch = (H * 0.55) / rows;
+  const baseY = H * 0.45;
+  const colors = ['#e74c3c', '#fff', '#3498db', '#f39c12', '#2ecc71'];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * cw + cw / 2 + (rand() - 0.5) * 10;
+      const y = baseY + row * ch + ch / 2;
+      const r = 18 + rand() * 14;
+      const c = colors[Math.floor(rand() * colors.length)];
+      svg += `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 0.55}" fill="${c}" stroke="#333" stroke-width="0.7"/>`;
+      svg += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + 22}" stroke="#8b6914" stroke-width="1.2"/>`;
+      if (rand() > 0.5) {
+        svg += `<rect x="${x - 8}" y="${y + 20}" width="16" height="6" fill="#d35400" stroke="#333" stroke-width="0.4" rx="1"/>`;
+      }
+    }
+  }
+  return svg;
+}
+
+function drawForestCanopy(rand) {
+  let svg = `<rect width="${W}" height="${H}" fill="#1e5631"/>`;
+  const cols = 13;
+  const rows = 10;
+  const cw = W / cols;
+  const ch = H / rows;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * cw + cw / 2 + (rand() - 0.5) * 12;
+      const y = row * ch + ch / 2 + (rand() - 0.5) * 8;
+      const r = 22 + rand() * 18;
+      const g = 25 + Math.floor(rand() * 35);
+      svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="hsl(125, 45%, ${g}%)" stroke="#0d3320" stroke-width="0.8"/>`;
+      svg += `<circle cx="${x - r * 0.3}" cy="${y - r * 0.2}" r="${r * 0.55}" fill="hsl(130, 50%, ${g + 8}%)" opacity="0.85"/>`;
+    }
+  }
+  return svg;
+}
+
+function drawParkingLot(rand) {
+  let svg = `<rect width="${W}" height="${H}" fill="#5a6268"/>`;
+  const cols = 10;
+  const rows = 7;
+  const cw = W / cols;
+  const ch = H / rows;
+  const carColors = ['#c0392b', '#2980b9', '#f1c40f', '#ecf0f1', '#2c3e50', '#8e44ad'];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * cw + 8 + rand() * 6;
+      const y = row * ch + 10 + rand() * 6;
+      const cw2 = cw - 16;
+      const ch2 = ch - 18;
+      svg += `<rect x="${x}" y="${y}" width="${cw2}" height="${ch2}" fill="#4a4f54" stroke="#fff" stroke-width="0.8" opacity="0.35"/>`;
+      const carW = cw2 * 0.75;
+      const carH = ch2 * 0.55;
+      const cx = x + (cw2 - carW) / 2;
+      const cy = y + (ch2 - carH) / 2;
+      const cc = carColors[Math.floor(rand() * carColors.length)];
+      svg += `<rect x="${cx}" y="${cy}" width="${carW}" height="${carH}" rx="3" fill="${cc}" stroke="#222" stroke-width="0.7"/>`;
+      svg += `<rect x="${cx + carW * 0.15}" y="${cy + 3}" width="${carW * 0.35}" height="${carH * 0.35}" fill="#87ceeb" opacity="0.7"/>`;
+    }
+  }
+  return svg;
+}
+
+function drawBookshelfWall(rand) {
+  let svg = `<rect width="${W}" height="${H}" fill="#3d2914"/>`;
+  const cols = 16;
+  const rows = 11;
+  const cw = W / cols;
+  const ch = H / rows;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = col * cw + 1;
+      const y = row * ch + 1;
+      const hue = Math.floor(rand() * 360);
+      const light = 25 + rand() * 35;
+      svg += `<rect x="${x}" y="${y}" width="${cw - 2}" height="${ch - 2}" fill="hsl(${hue}, 40%, ${light}%)" stroke="#1a1008" stroke-width="0.5"/>`;
+      if (rand() > 0.4) {
+        svg += `<line x1="${x + 2}" y1="${y + ch / 2}" x2="${x + cw - 4}" y2="${y + ch / 2}" stroke="rgba(0,0,0,0.25)" stroke-width="0.8"/>`;
+      }
+    }
+  }
+  return svg;
+}
+
+function drawSnowRoofs(rand) {
+  return drawRooftopCity(rand, {
+    roof: '#b8c9d9',
+    wall: '#eef2f6',
+    bg: '#a8c4e0',
+    cols: 15,
+    rows: 11,
+  });
+}
+
+function drawNightCity(rand) {
+  let base = drawRooftopCity(rand, {
+    roof: '#5c4a42',
+    wall: '#c8c4bc',
+    bg: '#1a1f2e',
+    cols: 14,
+    rows: 10,
+  });
+  const windows = Array.from({ length: 120 }, () => {
+    const x = rand() * W;
+    const y = rand() * H;
+    if (rand() > 0.55) {
+      return `<rect x="${x}" y="${y}" width="5" height="7" fill="#ffe566" opacity="0.85"/>`;
+    }
+    return '';
+  }).join('');
+  return base + windows;
+}
+
+function pickCatSpot(rand, margin = 0.08) {
+  return {
+    cx: margin + rand() * (1 - margin * 2),
+    cy: margin + rand() * (1 - margin * 2),
+    size: 0.032 + rand() * 0.016,
+  };
+}
+
+function catColorsForTheme(theme) {
+  const map = {
+    rooftop: ['#9a9590', '#7a7570'],
+    market: ['#c9b8a8', '#a89888'],
+    beach: ['#d4a574', '#b8956a'],
+    forest: ['#6a7a62', '#4a5a42'],
+    parking: ['#7a7e82', '#5a5e62'],
+    books: ['#5c4030', '#3d2914'],
+    snow: ['#a8b0b8', '#889098'],
+    night: ['#6a6560', '#4a4540'],
+  };
+  const pair = map[theme] ?? map.rooftop;
+  return { fill: pair[0], stroke: pair[1] };
+}
+
+const LEVEL_THEMES = [
+  { name: 'Rooftop Maze', theme: 'rooftop', countdown: 10, draw: (r) => drawRooftopCity(r) },
+  { name: 'Terracotta Town', theme: 'rooftop', countdown: 10, draw: (r) => drawRooftopCity(r, { roof: '#d4634a', wall: '#faf8f5' }) },
+  { name: 'Old Quarter', theme: 'rooftop', countdown: 11, draw: (r) => drawRooftopCity(r, { roof: '#a84f38', cols: 15, rows: 11 }) },
+  { name: 'Market Square', theme: 'market', countdown: 11, draw: drawMarketGrid },
+  { name: 'Bazaar Rush', theme: 'market', countdown: 12, draw: drawMarketGrid },
+  { name: 'Sunny Beach', theme: 'beach', countdown: 12, draw: drawBeachUmbrellas },
+  { name: 'Coast Crowd', theme: 'beach', countdown: 12, draw: drawBeachUmbrellas },
+  { name: 'Green Canopy', theme: 'forest', countdown: 13, draw: drawForestCanopy },
+  { name: 'Deep Woods', theme: 'forest', countdown: 13, draw: drawForestCanopy },
+  { name: 'Parking Grid', theme: 'parking', countdown: 13, draw: drawParkingLot },
+  { name: 'Library Wall', theme: 'books', countdown: 14, draw: drawBookshelfWall },
+  { name: 'Winter Roofs', theme: 'snow', countdown: 14, draw: drawSnowRoofs },
+  { name: 'Night Lights', theme: 'night', countdown: 14, draw: drawNightCity },
+  { name: 'Suburbia', theme: 'rooftop', countdown: 15, draw: (r) => drawRooftopCity(r, { roof: '#b85a42', wall: '#ece8e2', cols: 13, rows: 9 }) },
+  { name: 'Harbor Homes', theme: 'rooftop', countdown: 15, draw: (r) => drawRooftopCity(r, { bg: '#d4e4ef', roof: '#c05038' }) },
+  { name: 'Festival Stalls', theme: 'market', countdown: 15, draw: drawMarketGrid },
+  { name: 'Resort Strip', theme: 'beach', countdown: 16, draw: drawBeachUmbrellas },
+  { name: 'Jungle Pack', theme: 'forest', countdown: 16, draw: drawForestCanopy },
+  { name: 'Midnight City', theme: 'night', countdown: 17, draw: drawNightCity },
+  { name: 'Alpine Village', theme: 'snow', countdown: 17, draw: drawSnowRoofs },
+  { name: 'Scholar Stacks', theme: 'books', countdown: 18, draw: drawBookshelfWall },
+  { name: 'Master Rooftops', theme: 'rooftop', countdown: 20, draw: (r) => drawRooftopCity(r, { cols: 16, rows: 12, roof: '#bf5038' }) },
 ];
 
+const LEVEL_DEFS = LEVEL_THEMES.map((def, i) => {
+  const id = i + 1;
+  const rand = mulberry32(id * 9973 + 42);
+  const cat = pickCatSpot(rand, 0.1);
+  cat.size = Math.max(0.02, cat.size - id * 0.00025);
+  return {
+    id,
+    name: def.name,
+    countdown: def.countdown,
+    theme: def.theme,
+    cat,
+    draw: def.draw,
+    rand,
+  };
+});
+
 const levels = LEVEL_DEFS.map((def) => {
+  const { fill, stroke } = catColorsForTheme(def.theme);
   const hit = catHit(def.cat.cx, def.cat.cy, def.cat.size);
+  const scene = def.draw(def.rand);
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="1000" height="700">
-  ${def.draw(def.cat)}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+  ${scene}
+  ${peekCatSvg(def.cat.cx, def.cat.cy, def.cat.size, fill, stroke)}
 </svg>`;
   const filename = `level-${String(def.id).padStart(2, '0')}.svg`;
   writeFileSync(join(outDir, filename), svg, 'utf8');

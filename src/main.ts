@@ -67,11 +67,12 @@ function renderStart(): string {
     <main>
       <div class="panel">
         <h1>Find the Cat</h1>
-        <p class="subtitle">Twenty-two hidden kitties. Sharp eyes win.</p>
+        <p class="subtitle">Dense hidden-object scenes — spot the tiny cat before time runs out.</p>
         <div class="rules">
           <strong>How to play</strong>
           <ul>
-            <li>Tap the hidden cat in each scene before the timer hits zero.</li>
+            <li>Each level asks: <strong>Can you find the Cat within 10 seconds?</strong> (later levels get a bit more time).</li>
+            <li>Tap the hidden cat in the busy scene before the timer hits zero.</li>
             <li>You start with <strong>${LIVES_START} lives</strong>. A wrong tap or timeout costs one life and replays the level.</li>
             <li>Find the cat to earn <strong>${SCORE_PER_LEVEL} points</strong>, plus <strong>+${STREAK_BONUS}</strong> per streak level.</li>
             <li>Wrong clicks also shave <strong>${MISS_PENALTY_SEC}s</strong> off the clock — hurry!</li>
@@ -87,6 +88,7 @@ function renderPlaying(): string {
   const imgSrc = `${BASE}${level.image.replace(/^\//, '')}`;
   return `
     <main>
+      <p class="challenge-prompt">Can you find the Cat within <strong>${level.countdown}</strong> seconds?</p>
       <p class="level-title">Level ${level.id}: <strong>${level.name}</strong></p>
       <div class="scene-wrap" data-scene role="button" tabindex="0" aria-label="Scene: tap to find the cat">
         <img src="${imgSrc}" alt="${level.name} — find the hidden cat" width="1000" height="700" draggable="false" />
@@ -205,8 +207,7 @@ function updateHudTimer(): void {
 
 function hitTest(level: Level, nx: number, ny: number): boolean {
   const { x, y, w, h } = level.hitBox;
-  const pad = 0.02;
-  return nx >= x - pad && nx <= x + w + pad && ny >= y - pad && ny <= y + h + pad;
+  return nx >= x && nx <= x + w && ny >= y && ny <= y + h;
 }
 
 function pointerToNormalized(scene: HTMLElement, clientX: number, clientY: number): { nx: number; ny: number } {
