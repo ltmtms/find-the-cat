@@ -91,7 +91,7 @@ function renderPlaying(): string {
       <p class="challenge-prompt">Can you find the Cat within <strong>${level.countdown}</strong> seconds?</p>
       <p class="level-title">Level ${level.id}: <strong>${level.name}</strong></p>
       <div class="scene-wrap" data-scene role="button" tabindex="0" aria-label="Scene: tap to find the cat">
-        <img src="${imgSrc}" alt="${level.name} — find the hidden cat" width="1000" height="700" draggable="false" />
+        <img src="${imgSrc}" alt="${level.name} — find the hidden cat" draggable="false" />
       </div>
     </main>`;
 }
